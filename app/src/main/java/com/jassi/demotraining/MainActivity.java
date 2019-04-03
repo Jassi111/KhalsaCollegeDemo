@@ -1,9 +1,12 @@
 package com.jassi.demotraining;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -13,14 +16,24 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
+
+    Button btn_next;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        callGetService();
-        alertPractice();
+        callGetService();
+        btn_next = (Button) findViewById(R.id.btn_next);
+        btn_next.setOnClickListener(this);
+//        alertPractice();
     }
 
 
@@ -51,7 +64,34 @@ public class MainActivity extends AppCompatActivity {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
+//                Toast.makeText(MainActivity.this,response,Toast.LENGTH_LONG).show();
+
+
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+
+                    if (jsonArray.length() > 0) {
+
+
+                        for (int i=0;i<jsonArray.length();i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            Toast.makeText(MainActivity.this, jsonObject.getString("Phone_Number"),Toast.LENGTH_LONG).show();
+
+
+                            String name = jsonObject.getString("Name");
+                            String phone_number = jsonObject.getString("Phone_Number");
+
+                        }
+
+                    }
+
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -64,6 +104,25 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    }
+
+
+
+
+
+    public void callIntent() {
+        Intent intent= new Intent(MainActivity.this,Main2Activity.class);
+        intent.putExtra("name","abc");
+        intent.putExtra("name1","xyz");
+        startActivity(intent);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_next) {
+            callIntent();
+        }
     }
 
 }
