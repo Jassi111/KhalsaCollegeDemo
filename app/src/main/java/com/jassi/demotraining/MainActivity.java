@@ -13,6 +13,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -30,10 +31,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        callGetService();
+//        callGetService();
         btn_next = (Button) findViewById(R.id.btn_next);
         btn_next.setOnClickListener(this);
 //        alertPractice();
+        callPostService();
     }
 
 
@@ -84,9 +86,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                     }
-
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -101,10 +100,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
         RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
         requestQueue.add(stringRequest);
+    }
+
+
+
+
+    public void callPostService() {
+
+        String url = "https://api.backendless.com/7FB1698B-6A87-B2A1-FF77-DF723E437400/D4A77C95-C7E0-E309-FF48-9ECBA9FC5000/data/UserTable";
+
+
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("Name","test man");
+            jsonObject.put("Gender","test gender");
+            jsonObject.put("Phone_Number","test man");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+                alert.setTitle("Success");
+                alert.setMessage("Your record has been successfully inserted");
+                alert.setPositiveButton("OK",null);
+                alert.show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        });
+
+
+        RequestQueue requestQueue = Volley.newRequestQueue(MainActivity.this);
+        requestQueue.add(jsonObjectRequest);
+
+
+
+
+
+
+
 
 
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
